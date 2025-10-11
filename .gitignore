@@ -1,6 +1,31 @@
-node_modules
-dist
+# OS and system files
 .DS_Store
-server/public
-vite.config.ts.*
-*.tar.gz
+Thumbs.db
+desktop.ini
+
+# Logs and temp files
+*.log
+*.tmp
+*.swp
+*.bak
+
+# Node modules or package caches (if added later)
+node_modules/
+npm-debug.log*
+
+# Build and dist folders
+dist/
+build/
+
+# IDE and editor folders
+.vscode/
+.idea/
+*.iml
+
+# Java specific
+*.class
+*.jar
+*.war
+*.ear
+target/
+out/
