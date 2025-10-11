@@ -37,8 +37,15 @@ Social-DownloaderBuildByDS/
 ---
 
 ## 👨‍💻 Author
-Developed by [**@shankarlovex**](https://github.com/shankarlovex)  
-Built with ❤️ by **DS**
+Developed by [**@BuildByDS**](https://instagram.com/buildbyds)
+
+Instagram [**@shankarlovex**](https://instagram.com/shankar__lovex)
+
+GitHub [**@shankarlovex**](https://github.com/shankarlovex)  
+
+X/Twitter [**@shankarlovex**](https://x.com/shankar__lovex)
+
+Built with ❤️ by **Build By DS**
 
 ---
 
