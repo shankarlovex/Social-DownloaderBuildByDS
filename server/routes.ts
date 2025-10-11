@@ -9,6 +9,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { url } = req.body;
       
+      console.log("Received video info request for URL:", url);
+      
       if (!url) {
         return res.status(400).json({ error: "URL is required" });
       }
@@ -18,9 +20,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Invalid YouTube URL" });
       }
 
+      console.log("Fetching video info from YouTube...");
+      
       // Get video info
       const info = await ytdl.getInfo(url);
       const videoDetails = info.videoDetails;
+
+      console.log("Successfully fetched video info:", videoDetails.title);
 
       // Extract relevant information
       const videoInfo = {
@@ -32,10 +38,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         videoId: videoDetails.videoId,
       };
 
-      res.json(videoInfo);
+      return res.json(videoInfo);
     } catch (error: any) {
-      console.error("Error fetching video info:", error);
-      res.status(500).json({ 
+      console.error("Error fetching video info:", error.message);
+      console.error("Full error:", error);
+      return res.status(500).json({ 
         error: "Failed to fetch video information",
         message: error.message 
       });
