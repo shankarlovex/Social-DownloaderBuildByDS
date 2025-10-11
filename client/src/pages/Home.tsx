@@ -7,50 +7,20 @@ import DownloadProgress from "@/components/DownloadProgress";
 import DownloadHistory from "@/components/DownloadHistory";
 import SettingsModal from "@/components/SettingsModal";
 import { Button } from "@/components/ui/button";
-import { Bell } from "lucide-react";
-
-//todo: remove mock functionality - get video ID from URL for different previews
-const getVideoIdFromUrl = (url: string) => {
-  const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
-  return match ? match[1] : "dQw4w9WgXcQ";
-};
-
-//todo: remove mock functionality - generate mock data based on video ID
-const getMockVideoData = (url: string) => {
-  const videoId = getVideoIdFromUrl(url);
-  const mockTitles = [
-    "Amazing Tutorial: How to Build Modern Web Applications",
-    "Complete Guide to Web Development in 2024",
-    "Learn Programming: From Beginner to Advanced",
-    "Top 10 Developer Tools You Must Know",
-    "Building Scalable Applications with React",
-  ];
-  const mockChannels = [
-    "Tech Masters",
-    "Code Academy",
-    "Dev Tutorials",
-    "Programming Hub",
-    "Web Dev Pro",
-  ];
-  
-  const index = videoId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % mockTitles.length;
-  
-  return {
-    thumbnail: `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`,
-    title: mockTitles[index],
-    duration: `${10 + (index * 2)}:${20 + (index * 5)}`,
-    channel: mockChannels[index],
-  };
-};
+import { Bell, Loader2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
 
 export default function Home() {
   const [videoUrl, setVideoUrl] = useState("");
   const [videoData, setVideoData] = useState<any>(null);
   const [showVideo, setShowVideo] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const [downloadProgress, setDownloadProgress] = useState(0);
   const [showHistory, setShowHistory] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const { toast } = useToast();
   
   //todo: remove mock functionality
   const [downloadHistory, setDownloadHistory] = useState([
@@ -63,12 +33,28 @@ export default function Home() {
     },
   ]);
 
-  const handleURLSubmit = (url: string) => {
+  const handleURLSubmit = async (url: string) => {
     setVideoUrl(url);
-    const mockData = getMockVideoData(url);
-    setVideoData(mockData);
-    setShowVideo(true);
-    console.log("Fetching video info for:", url);
+    setIsLoading(true);
+    setShowVideo(false);
+    
+    try {
+      const response = await apiRequest("POST", "/api/video-info", { url });
+      const data = await response.json();
+
+      setVideoData(data);
+      setShowVideo(true);
+      console.log("Fetched video info:", data);
+    } catch (error: any) {
+      console.error("Error fetching video info:", error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to fetch video information. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleDownload = (format: string, quality: string) => {
@@ -145,7 +131,14 @@ export default function Home() {
         <div className="space-y-6">
           <URLInput onSubmit={handleURLSubmit} />
 
-          {showVideo && videoData && (
+          {isLoading && (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              <span className="ml-3 text-lg">Fetching video information...</span>
+            </div>
+          )}
+
+          {showVideo && videoData && !isLoading && (
             <>
               <VideoPreview {...videoData} />
               <FormatSelector onDownload={handleDownload} />
