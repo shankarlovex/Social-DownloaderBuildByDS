@@ -9,16 +9,43 @@ import SettingsModal from "@/components/SettingsModal";
 import { Button } from "@/components/ui/button";
 import { Bell } from "lucide-react";
 
-//todo: remove mock functionality
-const mockVideoData = {
-  thumbnail: "https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg",
-  title: "Amazing Tutorial: How to Build Modern Web Applications with React and TypeScript",
-  duration: "15:42",
-  channel: "Tech Masters",
+//todo: remove mock functionality - get video ID from URL for different previews
+const getVideoIdFromUrl = (url: string) => {
+  const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
+  return match ? match[1] : "dQw4w9WgXcQ";
+};
+
+//todo: remove mock functionality - generate mock data based on video ID
+const getMockVideoData = (url: string) => {
+  const videoId = getVideoIdFromUrl(url);
+  const mockTitles = [
+    "Amazing Tutorial: How to Build Modern Web Applications",
+    "Complete Guide to Web Development in 2024",
+    "Learn Programming: From Beginner to Advanced",
+    "Top 10 Developer Tools You Must Know",
+    "Building Scalable Applications with React",
+  ];
+  const mockChannels = [
+    "Tech Masters",
+    "Code Academy",
+    "Dev Tutorials",
+    "Programming Hub",
+    "Web Dev Pro",
+  ];
+  
+  const index = videoId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % mockTitles.length;
+  
+  return {
+    thumbnail: `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`,
+    title: mockTitles[index],
+    duration: `${10 + (index * 2)}:${20 + (index * 5)}`,
+    channel: mockChannels[index],
+  };
 };
 
 export default function Home() {
   const [videoUrl, setVideoUrl] = useState("");
+  const [videoData, setVideoData] = useState<any>(null);
   const [showVideo, setShowVideo] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const [downloadProgress, setDownloadProgress] = useState(0);
@@ -38,6 +65,8 @@ export default function Home() {
 
   const handleURLSubmit = (url: string) => {
     setVideoUrl(url);
+    const mockData = getMockVideoData(url);
+    setVideoData(mockData);
     setShowVideo(true);
     console.log("Fetching video info for:", url);
   };
@@ -56,8 +85,8 @@ export default function Home() {
           
           const newDownload = {
             id: Date.now().toString(),
-            title: mockVideoData.title,
-            thumbnail: mockVideoData.thumbnail,
+            title: videoData?.title || "Downloaded Video",
+            thumbnail: videoData?.thumbnail || "https://img.youtube.com/vi/dQw4w9WgXcQ/default.jpg",
             status: "success" as const,
             format: `${format.toUpperCase()} ${quality}`,
           };
@@ -116,9 +145,9 @@ export default function Home() {
         <div className="space-y-6">
           <URLInput onSubmit={handleURLSubmit} />
 
-          {showVideo && (
+          {showVideo && videoData && (
             <>
-              <VideoPreview {...mockVideoData} />
+              <VideoPreview {...videoData} />
               <FormatSelector onDownload={handleDownload} />
             </>
           )}

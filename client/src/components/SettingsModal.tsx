@@ -77,7 +77,7 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
             <h3 className="text-sm font-semibold text-muted-foreground">Developer</h3>
             <div className="space-y-2">
               <p className="text-sm">
-                Created by <span className="font-semibold">@shankar-lover</span>
+                Created by <span className="font-semibold">@shankar__lovex</span>
               </p>
               <div className="flex gap-2">
                 <Button
@@ -87,7 +87,7 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
                   asChild
                 >
                   <a
-                    href="https://instagram.com/shankar-lover"
+                    href="https://instagram.com/shankar__lovex"
                     target="_blank"
                     rel="noopener noreferrer"
                     data-testid="link-instagram"
@@ -103,7 +103,7 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
                   asChild
                 >
                   <a
-                    href="https://x.com/shankar-lover"
+                    href="https://x.com/shankar__lovex"
                     target="_blank"
                     rel="noopener noreferrer"
                     data-testid="link-twitter"
